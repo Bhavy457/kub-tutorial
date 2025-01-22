@@ -1,23 +1,18 @@
-# Use a base OpenJDK image to compile the code
-FROM openjdk:17-jdk-slim AS build
-
-# Set the working directory inside the container
-WORKDIR /app
-
-# Copy the Java source code into the container
-COPY Main.java .
-
-# Compile the Java code inside the container
-RUN javac Main.java
-
-# Create a new stage to run the compiled application
+# Use an official OpenJDK image as the base
 FROM openjdk:17-jdk-slim
 
-# Set the working directory in the new container
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy the compiled Java class from the build stage
-COPY --from=build /app/Main.class .
+# Create a simple HelloWorld.java file inside the container
+RUN echo 'public class HelloWorld {' > HelloWorld.java && \
+    echo '  public static void main(String[] args) {' >> HelloWorld.java && \
+    echo '    System.out.println("Hello, World!");' >> HelloWorld.java && \
+    echo '  }' >> HelloWorld.java && \
+    echo '}' >> HelloWorld.java
 
-# Run the application
-CMD ["java", "Main"]
+# Compile the Java program
+RUN javac HelloWorld.java
+
+# Run the Java program
+CMD ["java", "HelloWorld"]
